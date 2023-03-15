@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import React, { useState } from "react";
+import * as Clipboard from "expo-clipboard";
 
 //Form validation
 import * as Yup from "yup";
@@ -173,7 +174,11 @@ export default function App() {
         {isPassGenerated ? (
           <View style={[styles.card, styles.cardElevated]}>
             <Text style={styles.description}>Long Press to copy</Text>
-            <Text selectable style={styles.generatedPassword}>
+            <Text
+              // selectable
+              style={styles.generatedPassword}
+              onLongPress={async () => await Clipboard.setStringAsync(password)}
+            >
               {password}
             </Text>
           </View>
@@ -217,6 +222,7 @@ const styles = StyleSheet.create({
   },
   inputColumn: {
     flexDirection: "column",
+    maxWidth: 200,
   },
   inputStyle: {
     padding: 8,
