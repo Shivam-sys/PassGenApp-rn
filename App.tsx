@@ -103,14 +103,14 @@ export default function App() {
                         {errors.passwordLength}
                       </Text>
                     )}
-                    <TextInput
-                      style={styles.inputStyle}
-                      value={values.passwordLength}
-                      onChangeText={handleChange("passwordLength")}
-                      placeholder="ex. 8"
-                      keyboardType="numeric"
-                    />
                   </View>
+                  <TextInput
+                    style={styles.inputStyle}
+                    value={values.passwordLength}
+                    onChangeText={handleChange("passwordLength")}
+                    placeholder="ex. 8"
+                    keyboardType="numeric"
+                  />
                 </View>
                 <View style={styles.inputWrapper}>
                   <Text style={styles.heading}>Include Lowercase</Text>
