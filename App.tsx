@@ -13,11 +13,12 @@ import React, { useState } from "react";
 import * as Yup from "yup";
 import { Formik } from "formik";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { StatusBar } from "expo-status-bar";
 
 const passwordSchema = Yup.object().shape({
   passwordLength: Yup.number()
-    .min(4, "should be minimum 4 characters")
-    .max(16, "should be max of 16 characters")
+    .min(4, "minimum 4 is required")
+    .max(16, "maximum 16 is accepted")
     .required("This is required"),
 });
 
@@ -72,6 +73,7 @@ export default function App() {
 
   return (
     <ScrollView keyboardShouldPersistTaps={"handled"}>
+      <StatusBar style="auto" />
       <SafeAreaView style={styles.appContainer}>
         <View style={styles.formContainer}>
           <Text style={styles.title}>Password Generator</Text>
@@ -79,7 +81,6 @@ export default function App() {
             initialValues={{ passwordLength: "" }}
             validationSchema={passwordSchema}
             onSubmit={(values) => {
-              console.log(values);
               generatePasswordString(+values.passwordLength); // '+' converts to number.
             }}
           >
@@ -117,7 +118,7 @@ export default function App() {
                     disableBuiltInState
                     isChecked={lowercase}
                     onPress={() => setLowercase(!lowercase)}
-                    fillColor="#29AB87"
+                    fillColor="#EF5354"
                   />
                 </View>
                 <View style={styles.inputWrapper}>
@@ -126,7 +127,7 @@ export default function App() {
                     disableBuiltInState
                     isChecked={upperCase}
                     onPress={() => setUpperCase(!upperCase)}
-                    fillColor="#29AB87"
+                    fillColor="#C9A0DC"
                   />
                 </View>
                 <View style={styles.inputWrapper}>
@@ -135,7 +136,7 @@ export default function App() {
                     disableBuiltInState
                     isChecked={numbers}
                     onPress={() => setNumbers(!numbers)}
-                    fillColor="#29AB87"
+                    fillColor="#F7CD2E"
                   />
                 </View>
                 <View style={styles.inputWrapper}>
@@ -144,21 +145,39 @@ export default function App() {
                     disableBuiltInState
                     isChecked={symbols}
                     onPress={() => setSymbols(!symbols)}
-                    fillColor="#29AB87"
+                    fillColor="#E03B8B"
                   />
                 </View>
                 <View style={styles.formActions}>
-                  <TouchableOpacity>
-                    <Text>Generate Password</Text>
+                  <TouchableOpacity
+                    style={styles.secondaryBtn}
+                    onPress={() => {
+                      handleReset();
+                      resetPasswordState();
+                    }}
+                  >
+                    <Text style={styles.secondaryBtnTxt}>Reset</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity>
-                    <Text>Reset</Text>
+                  <TouchableOpacity
+                    disabled={!isValid}
+                    style={styles.primaryBtn}
+                    onPress={() => handleSubmit()}
+                  >
+                    <Text style={styles.primaryBtnTxt}>Generate Password</Text>
                   </TouchableOpacity>
                 </View>
               </>
             )}
           </Formik>
         </View>
+        {isPassGenerated ? (
+          <View style={[styles.card, styles.cardElevated]}>
+            <Text style={styles.description}>Long Press to copy</Text>
+            <Text selectable style={styles.generatedPassword}>
+              {password}
+            </Text>
+          </View>
+        ) : null}
       </SafeAreaView>
     </ScrollView>
   );
@@ -167,6 +186,7 @@ export default function App() {
 const styles = StyleSheet.create({
   appContainer: {
     flex: 1,
+    marginTop: 20,
   },
   formContainer: {
     margin: 8,
@@ -187,7 +207,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   heading: {
-    fontSize: 15,
+    fontSize: 16,
   },
   inputWrapper: {
     marginBottom: 15,
@@ -211,14 +231,15 @@ const styles = StyleSheet.create({
   },
   formActions: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-around",
   },
   primaryBtn: {
-    width: 120,
+    flex: 1,
     padding: 10,
     borderRadius: 8,
     marginHorizontal: 8,
     backgroundColor: "#5DA3FA",
+    justifyContent: "center",
   },
   primaryBtnTxt: {
     color: "#fff",
@@ -226,11 +247,13 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   secondaryBtn: {
-    width: 120,
+    // width: 120,
+    flex: 1,
     padding: 10,
     borderRadius: 8,
     marginHorizontal: 8,
     backgroundColor: "#CAD5E2",
+    justifyContent: "center",
   },
   secondaryBtnTxt: {
     textAlign: "center",
@@ -239,9 +262,9 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 6,
     marginHorizontal: 12,
+    backgroundColor: "#f3f3f3",
   },
   cardElevated: {
-    backgroundColor: "#ffffff",
     elevation: 1,
     shadowOffset: {
       width: 1,
